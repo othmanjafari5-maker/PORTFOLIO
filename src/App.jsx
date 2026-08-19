@@ -1,24 +1,30 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route, NavLink, Link } from "react-router-dom";
 import {
-  Link as LinkIcon,
   ExternalLink,
   Mail,
   Menu,
+  Phone,
   X,
   Film,
   Code2,
   GraduationCap,
   Rocket,
   ArrowUpRight,
+  Home,
+  UserRound,
+  BriefcaseBusiness,
 } from "lucide-react";
+
 const COLORS = {
-  night: "#14172B",   // background — night sky over Arusha
-  paper: "#F1E9D8",   // storyboard paper / light panels
-  ember: "#E0913D",   // primary accent — Kilimanjaro sunset amber
-  acacia: "#2E7C6E",  // secondary accent — tech / code
-  ink: "#23241F",     // dark text on light panels
-  bone: "#F7F5EF",    // light text on dark panels
+  night: "#14172B",
+  paper: "#F1E9D8",
+  ember: "#E0913D",
+  acacia: "#2E7C6E",
+  ink: "#23241F",
+  bone: "#F7F5EF",
 };
+
 const SKILLS = [
   { name: "JavaScript", note: "core language" },
   { name: "HTML & CSS", note: "structure & style" },
@@ -31,25 +37,25 @@ const SKILLS = [
 
 const PROJECTS = [
   {
-    frame: "04",
     title: "Smart Garage",
     role: "Flutter frontend + PHP/MySQL backend",
     description:
       "A vehicle assistance platform connecting drivers with nearby garages and emergency mechanical support. Rebuilding the original website as a mobile app while keeping the existing PHP backend.",
     tags: ["Flutter", "PHP", "MySQL", "REST API"],
   },
-
 ];
 
 const NAV_ITEMS = [
-  { id: "hero", label: "01 · Intro" },
-  { id: "about", label: "02 · About" },
-  { id: "education", label: "03 · Education" },
-  { id: "work", label: "04 · What I Do" },
-  { id: "contact", label: "05 · Contact" },
+  { path: "/", label: "Intro", icon: Home },
+  { path: "/about", label: "About", icon: UserRound },
+  { path: "/education", label: "Education", icon: GraduationCap },
+  { path: "/work", label: "What I Do", icon: BriefcaseBusiness },
+  { path: "/contact", label: "Contact", icon: Mail },
 ];
+
 function Sprockets({ side = "left" }) {
   const holes = Array.from({ length: 10 });
+
   return (
     <div
       className={`hidden md:flex flex-col justify-between py-6 ${side === "left" ? "items-start" : "items-end"
@@ -65,6 +71,7 @@ function Sprockets({ side = "left" }) {
     </div>
   );
 }
+
 function Frame({ id, number, title, children }) {
   return (
     <section
@@ -72,6 +79,7 @@ function Frame({ id, number, title, children }) {
       className="relative grid grid-cols-[2rem_1fr_2rem] md:grid-cols-[3rem_1fr_3rem] max-w-5xl mx-auto px-4"
     >
       <Sprockets side="left" />
+
       <div className="py-16 md:py-24">
         <div className="flex items-center gap-3 mb-8">
           <span
@@ -80,6 +88,7 @@ function Frame({ id, number, title, children }) {
           >
             FRAME {number}
           </span>
+
           <h2
             className="text-2xl md:text-3xl font-bold tracking-tight"
             style={{ fontFamily: "'Space Grotesk', sans-serif" }}
@@ -87,8 +96,10 @@ function Frame({ id, number, title, children }) {
             {title}
           </h2>
         </div>
+
         {children}
       </div>
+
       <Sprockets side="right" />
     </section>
   );
@@ -122,13 +133,17 @@ function ProjectCard({ project }) {
         </span>
         <ArrowUpRight size={18} style={{ color: COLORS.acacia }} />
       </div>
+
       <h3 className="text-xl font-bold">{project.title}</h3>
+
       <p className="text-sm font-semibold" style={{ color: COLORS.acacia }}>
         {project.role}
       </p>
+
       <p className="text-sm leading-relaxed opacity-90">
         {project.description}
       </p>
+
       <div className="flex flex-wrap gap-2 mt-2">
         {project.tags.map((tag) => (
           <span
@@ -144,36 +159,120 @@ function ProjectCard({ project }) {
   );
 }
 
-export default function App() {
-  const [menuOpen, setMenuOpen] = useState(false);
 
-  // Loads a couple of Google Fonts so the page doesn't fall back to
-  // plain system fonts. This only needs to run once, so the
-  // dependency array is empty.
-  useEffect(() => {
-    const link = document.createElement("link");
-    link.href =
-      "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500&display=swap";
-    link.rel = "stylesheet";
-    document.head.appendChild(link);
-  }, []);
-
+function Sidebar({ mobileOpen, setMobileOpen }) {
   return (
-    <div
-      style={{
-        backgroundColor: COLORS.night,
-        color: COLORS.bone,
-        fontFamily: "'Inter', sans-serif",
-        minHeight: "100vh",
-      }}
-    >
-      {/* NAVIGATION — the "filmstrip" header */}
-      <header
-        className="sticky top-0 z-20 border-b"
-        style={{ backgroundColor: COLORS.night, borderColor: "#2a2e4a" }}
+    <>
+      {/* Desktop expandable sidebar */}
+      <aside
+        className="
+          hidden md:flex fixed left-0 top-0 bottom-0 z-50
+          w-20 hover:w-64 group
+          flex-col border-r overflow-hidden
+          transition-all duration-300 ease-in-out shadow-2xl
+        "
+        style={{
+          backgroundColor: COLORS.night,
+          borderColor: "#2a2e4a",
+        }}
       >
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        {/* Logo */}
+        <div className="h-20 flex items-center px-5 shrink-0">
+          <div className="flex items-center gap-4 min-w-max">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+              style={{
+                backgroundColor: COLORS.ember,
+                color: COLORS.ink,
+              }}
+            >
+              <Film size={21} />
+            </div>
+
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div
+                className="font-bold tracking-wide"
+                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+              >
+                OTHMAN
+              </div>
+              <div className="text-xs opacity-50">PORTFOLIO</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex flex-col gap-2 px-3 mt-6">
+          {NAV_ITEMS.map((item) => {
+            const Icon = item.icon;
+
+            return (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) =>
+                  `relative flex items-center gap-4 h-12 px-3 rounded-xl
+                   min-w-max transition-all duration-200 hover:translate-x-1
+                   ${isActive ? "ring-1" : ""}`
+                }
+                style={({ isActive }) => ({
+                  color: COLORS.bone,
+                  backgroundColor: isActive ? "#242942" : "transparent",
+                  ringColor: COLORS.ember,
+                })}
+              >
+                <Icon
+                  size={21}
+                  className="shrink-0"
+                  style={{ color: COLORS.ember }}
+                />
+
+                <span className="font-mono text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                  {item.label}
+                </span>
+              </NavLink>
+            );
+          })}
+        </nav>
+
+        {/* Bottom profile */}
+        <div className="mt-auto px-5 pb-6 min-w-max">
+          <div
+            className="flex items-center gap-3 border-t pt-5"
+            style={{ borderColor: "#2a2e4a" }}
+          >
+            <div
+              className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+              style={{
+                backgroundColor: COLORS.acacia,
+                color: COLORS.bone,
+              }}
+            >
+              <Code2 size={17} />
+            </div>
+
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <p className="text-sm font-semibold whitespace-nowrap">
+                Software Developer
+              </p>
+              <p className="text-xs opacity-50 whitespace-nowrap">
+                Arusha, Tanzania
+              </p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* Mobile navigation */}
+      <header
+        className="md:hidden sticky top-0 z-50 border-b"
+        style={{
+          backgroundColor: COLORS.night,
+          borderColor: "#2a2e4a",
+        }}
+      >
+        <div className="px-4 py-4 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2">
             <Film size={20} style={{ color: COLORS.ember }} />
             <span
               className="font-bold tracking-wide"
@@ -181,157 +280,329 @@ export default function App() {
             >
               OTHMAN
             </span>
-          </div>
-
-          <nav className="hidden md:flex gap-6 font-mono text-sm">
-            {NAV_ITEMS.map((item) => (
-              <a
-                key={item.id}
-                href={`#${item.id}`}
-                className="hover:opacity-70 transition-opacity"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
+          </Link>
 
           <button
-            className="md:hidden"
-            onClick={() => setMenuOpen(!menuOpen)}
+            className="p-2"
+            onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
+            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
 
-        {/* Mobile menu — only rendered when menuOpen is true */}
-        {menuOpen && (
-          <nav className="md:hidden flex flex-col px-4 pb-4 gap-3 font-mono text-sm">
+        {mobileOpen && (
+          <nav className="flex flex-col px-4 pb-4 gap-3 font-mono text-sm">
             {NAV_ITEMS.map((item) => (
-              <a
-                key={item.id}
-                href={`#${item.id}`}
-                onClick={() => setMenuOpen(false)}
+              <NavLink
+                key={item.path}
+                to={item.path}
+                onClick={() => setMobileOpen(false)}
               >
                 {item.label}
-              </a>
+              </NavLink>
             ))}
           </nav>
         )}
       </header>
+    </>
+  );
+}
 
-      {/* FRAME 01 — HERO */}
-      <Frame id="hero" number="01" title="Intro">
-        <p
-          className="text-3xl md:text-5xl font-bold leading-tight mb-4"
+function Page({ number, title, children }) {
+  return (
+    <section className="max-w-5xl mx-auto px-6 py-16 md:py-24">
+      <div className="flex items-center gap-3 mb-10">
+        
+        <h1
+          className="text-3xl md:text-4xl font-bold tracking-tight"
           style={{ fontFamily: "'Space Grotesk', sans-serif" }}
         >
-          Building software today,{" "}
-          <span style={{ color: COLORS.ember }}>an animation studio</span>{" "}
-          tomorrow.
+          {title}
+        </h1>
+      </div>
+      {children}
+    </section>
+  );
+}
+function TypewriterWords() {
+  const text = "Full Stack Developer ";
+  const [displayed, setDisplayed] = React.useState("");
+  const [index, setIndex] = React.useState(0);
+  const [deleting, setDeleting] = React.useState(false);
+
+  React.useEffect(() => {
+    let timer;
+
+    if (!deleting && index < text.length) {
+      // Typing
+      timer = setTimeout(() => {
+        setDisplayed(text.slice(0, index + 1));
+        setIndex(index + 1);
+      }, 120);
+
+    } else if (!deleting && index === text.length) {
+      // Pause after finishing
+      timer = setTimeout(() => {
+        setDeleting(true);
+      }, 1800);
+
+    } else if (deleting && index > 0) {
+      // Deleting
+      timer = setTimeout(() => {
+        setDisplayed(text.slice(0, index - 1));
+        setIndex(index - 1);
+      }, 70);
+
+    } else if (deleting && index === 0) {
+      // Pause before typing again
+      timer = setTimeout(() => {
+        setDeleting(false);
+      }, 600);
+    }
+
+    return () => clearTimeout(timer);
+  }, [index, deleting]);
+
+  return (
+    <span style={{ color: COLORS.ember }}>
+      {displayed}
+      <span className="typing-cursor">|</span>
+    </span>
+  );
+}
+function IntroPage() {
+  return (
+    <Page  title="Intro">
+      <p
+        className="text-3xl md:text-5xl font-bold leading-tight mb-4"
+        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+      >
+        <p
+
+>
+  Hi I'm OTHMAN JAFARI,{" "}
+  <TypewriterWords />
+</p>
+  
+      </p>
+      <p className="max-w-xl opacity-80 leading-relaxed">
+        A second-year of Bachelor in Computer Science student in
+        Arusha, Tanzania, learning full-stack development while working
+        toward starting my own animation company. 
+      </p>
+      <div className="flex gap-3 mt-6">
+        <Link
+          to="/work"
+          className="px-5 py-2 rounded-lg font-semibold text-sm"
+          style={{ backgroundColor: COLORS.ember, color: COLORS.ink }}
+        >
+          See my work
+        </Link>
+        <Link
+          to="/contact"
+          className="px-5 py-2 rounded-lg font-semibold text-sm border"
+          style={{ borderColor: COLORS.acacia }}
+        >
+          Get in touch
+        </Link>
+      </div>
+    </Page>
+  );
+}
+
+function AboutPage() {
+  return (
+    <Page  title="About Me">
+      <div className="flex items-start gap-4">
+        <GraduationCap
+          size={28}
+          style={{ color: COLORS.acacia }}
+          className="shrink-0 mt-1"
+        />
+        <p className="max-w-2xl leading-relaxed opacity-90">
+          I'm based in Dodoma, Tanzania, currently in my second year of 
+          Bachelor in Computer Science and Information Technology , expecting to graduate in 2027. I'm a
+           full-stack developer with a foundation in JavaScript,
+          and I learn best by building real, working projects and picking
+          apart how they work afterward. Outside of coding, I'm working
+          toward a bigger goal: starting my own animation studio in Tanzania.
         </p>
-        <p className="max-w-xl opacity-80 leading-relaxed">
-          I'm Othman — a second-year Diploma in Computer Science student in
-          Arusha, Tanzania, learning full-stack development while working
-          toward starting my own animation company.
+      </div>
+    </Page>
+  );
+}
+
+function EducationPage() {
+  return (
+    <Page  title="Education & Stack">
+      <div className="mb-10">
+        <div className="flex items-center gap-3 mb-3">
+          <GraduationCap size={24} style={{ color: COLORS.ember }} />
+          <h2 className="text-xl font-bold">
+            Diploma in Computer Science — Year 2
+          </h2>
+        </div>
+        <p className="opacity-70 ml-9">
+          Expected graduation: 2027 · Focus: full-stack development
         </p>
-        <div className="flex gap-3 mt-6">
-          <a
-            href="#work"
-            className="px-5 py-2 rounded-lg font-semibold text-sm"
-            style={{ backgroundColor: COLORS.ember, color: COLORS.ink }}
-          >
-            See my work
-          </a>
-          <a
-            href="#contact"
-            className="px-5 py-2 rounded-lg font-semibold text-sm border"
+      </div>
+      <p className="text-sm font-mono mb-4 opacity-70">TECH I USE</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        {SKILLS.map((skill) => (
+          <SkillTag key={skill.name} name={skill.name} note={skill.note} />
+        ))}
+      </div>
+    </Page>
+  );
+}
+
+function WorkPage() {
+  return (
+    <Page  title="What I Do">
+      <div className="grid md:grid-cols-2 gap-5">
+        {PROJECTS.map((project) => (
+          <ProjectCard key={project.title} project={project} />
+        ))}
+      </div>
+      <div className="mt-8 grid md:grid-cols-3 gap-4">
+        {[
+          ["Web Development", "Building websites and full-stack applications."],
+          ["Mobile Development", "Creating mobile applications with Flutter."],
+          ["Backend Development", "Working with PHP, MySQL and REST APIs."],
+        ].map(([title, text]) => (
+          <div
+            key={title}
+            className="rounded-xl border p-5"
             style={{ borderColor: COLORS.acacia }}
           >
-            Get in touch
-          </a>
-        </div>
-      </Frame>
-
-      {/* FRAME 02 — ABOUT */}
-      <Frame id="about" number="02" title="About Me">
-        <div className="flex items-start gap-4">
-          <GraduationCap
-            size={28}
-            style={{ color: COLORS.acacia }}
-            className="shrink-0 mt-1"
-          />
-          <p className="max-w-2xl leading-relaxed opacity-90">
-            I'm based in Arusha, Tanzania, currently in my second year of a
-            Diploma in Computer Science, expecting to graduate in 2027. I'm a
-            beginner full-stack developer with a foundation in JavaScript,
-            and I learn best by building real, working projects and picking
-            apart how they work afterward. Outside of coding, I'm working
-            toward a bigger goal: starting my own animation studio in
-            Tanzania.
-          </p>
-        </div>
-      </Frame>
-
-      {/* FRAME 03 — EDUCATION + SKILLS */}
-      <Frame id="education" number="03" title="Education & Stack">
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-2">
-            <Code2 size={18} style={{ color: COLORS.ember }} />
-            <p className="font-semibold">
-              Diploma in Computer Science — Year 2
-            </p>
+            <h3 className="font-bold mb-2">{title}</h3>
+            <p className="text-sm opacity-70 leading-relaxed">{text}</p>
           </div>
-          <p className="text-sm opacity-70 ml-6">
-            Expected graduation: 2027 · Focus: full-stack development
+        ))}
+      </div>
+    </Page>
+  );
+}
+
+function ContactPage() {
+  return (
+    <Page  title="Contact">
+      <div className="max-w-2xl">
+        <div className="flex items-start gap-4 mb-8">
+          <Rocket size={28} style={{ color: COLORS.ember }} className="shrink-0" />
+          <p className="opacity-90 leading-relaxed">
+            Open to entry-level IT and development opportunities in Tanzania,
+            for any kind of information feel free to check up on me the links below.
           </p>
         </div>
-
-        <p className="text-sm font-mono mb-3 opacity-70">TECH I USE</p>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {SKILLS.map((skill) => (
-            <SkillTag key={skill.name} name={skill.name} note={skill.note} />
-          ))}
-        </div>
-      </Frame>
-
-      {/* FRAME 04-06 — PROJECTS / WHAT I DO */}
-      <Frame id="work" number="04" title="What I Do">
-        <div className="grid md:grid-cols-3 gap-5">
-          {PROJECTS.map((project) => (
-            <ProjectCard key={project.title} project={project} />
-          ))}
-        </div>
-      </Frame>
-
-      {/* FRAME 07 — CONTACT */}
-      <Frame id="contact" number="05" title="Contact">
-        <div className="flex items-center gap-3 mb-6">
-          <Rocket size={22} style={{ color: COLORS.ember }} />
-          <p className="opacity-90">
-            Open to entry-level IT and dev opportunities in Arusha, and
-            always happy to talk about animation and building things.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-4 font-mono text-sm">
+        <div className="space-y-4 font-mono text-sm"> 
           <a
-            href="mailto:your-email@example.com"
-            className="flex items-center gap-2 hover:opacity-70"
+  href="tel:+255686013965"
+  className="flex items-center gap-3 hover:opacity-70"
+>
+  <Phone size={18} style={{ color: COLORS.ember }} />
+  +255 686 013 965
+</a>
+          <a
+  href="https://mail.google.com/mail/?view=cm&fs=1&to=othmanjafari5@gmail.com"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="flex items-center gap-3 hover:opacity-70"
+>
+  <Mail size={18} />
+  EMAIL
+</a>
+          <a
+            href="https://github.com/othmanjafari5-maker/"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-3 hover:opacity-70"
           >
-            <Mail size={16} /> your-email@example.com
+            <ExternalLink size={18} style={{ color: COLORS.ember }} />
+            GITHUB
+
           </a>
-          <a href="https://github.com/your-username" className="flex items-center gap-2 hover:opacity-70">
-            <ExternalLink size={16} /> github.com/your-username
-          </a>
-          <a href="https://linkedin.com/in/your-username" className="flex items-center gap-2 hover:opacity-70">
-            <ExternalLink size={16} /> linkedin.com/in/your-username
+          <a
+            href="https://www.linkedin.com/in/othman-jafari-8695b42a3/"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-3 hover:opacity-70"
+          >
+            <ExternalLink size={18} style={{ color: COLORS.ember }} />
+            LINKEDIN
           </a>
         </div>
-      </Frame>
+      </div>
+    </Page>
+  );
+}
 
-      <footer className="text-center py-8 text-xs font-mono opacity-40">
-        © {new Date().getFullYear()} Othman — built with React
-      </footer>
-    </div>
+function NotFound() {
+  return (
+    <Page number="404" title="Page Not Found">
+      <p className="opacity-70 mb-6">The page you're looking for does not exist.</p>
+      <Link
+        to="/"
+        className="inline-block px-5 py-2 rounded-lg font-semibold text-sm"
+        style={{ backgroundColor: COLORS.ember, color: COLORS.ink }}
+      >
+        Back to Intro
+      </Link>
+    </Page>
+  );
+}
+
+export default function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.href =
+      "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500&display=swap";
+    link.rel = "stylesheet";
+    document.head.appendChild(link);
+    return () => document.head.removeChild(link);
+  }, []);
+
+  return (
+    <BrowserRouter>
+      <div
+        className="min-h-screen"
+        style={{
+          backgroundColor: COLORS.night,
+          color: COLORS.bone,
+          fontFamily: "'Inter', sans-serif",
+        }}
+      >
+        <Sidebar
+          mobileOpen={menuOpen}
+          setMobileOpen={setMenuOpen}
+        />
+
+        <main className="md:ml-20 transition-all duration-300">
+          <Routes>
+            <Route path="/" element={<IntroPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/education" element={<EducationPage />} />
+            <Route path="/work" element={<WorkPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+
+        <footer className="md:ml-20 overflow-hidden py-2 border-t border-white/10">
+          <div className="marquee">
+            <div className="marquee-content">
+              <span>Application Programmer</span>
+              <span>Application Programmer</span>
+              <span>Application Programmer</span>
+              <span>Application Programmer</span>
+              <span>Application Programmer</span>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </BrowserRouter>
   );
 }

@@ -1,1 +1,30 @@
 @import "tailwindcss";
+
+.marquee {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.marquee-content {
+    display: inline-flex;
+    gap: 50px;
+    animation: marquee-right 18s linear infinite;
+    transform: translateX(-100%);
+}
+.marquee-content span {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #E0913D;
+  letter-spacing: 0.08em;
+}
+@keyframes marquee-right {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(100vw);
+    }
+}
