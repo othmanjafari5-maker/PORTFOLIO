@@ -17,8 +17,8 @@ import {
 } from "lucide-react";
 
 const COLORS = {
-  night: "#14172B",
-  paper: "#F1E9D8",
+  night: "#003152",
+  paper: "#ADDFF1",
   ember: "#E0913D",
   acacia: "#2E7C6E",
   ink: "#23241F",
