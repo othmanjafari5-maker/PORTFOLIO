@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route, NavLink, Link } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
 import {
   ExternalLink,
   Mail,
@@ -46,64 +45,12 @@ const PROJECTS = [
 ];
 
 const NAV_ITEMS = [
-  { path: "/", label: "Intro", icon: Home },
-  { path: "/about", label: "About", icon: UserRound },
-  { path: "/education", label: "Education", icon: GraduationCap },
-  { path: "/work", label: "What I Do", icon: BriefcaseBusiness },
-  { path: "/contact", label: "Contact", icon: Mail },
+  { id: "intro", label: "Intro", icon: Home },
+  { id: "about", label: "About", icon: UserRound },
+  { id: "education", label: "Education", icon: GraduationCap },
+  { id: "work", label: "What I Do", icon: BriefcaseBusiness },
+  { id: "contact", label: "Contact", icon: Mail },
 ];
-
-function Sprockets({ side = "left" }) {
-  const holes = Array.from({ length: 10 });
-
-  return (
-    <div
-      className={`hidden md:flex flex-col justify-between py-6 ${side === "left" ? "items-start" : "items-end"
-        }`}
-    >
-      {holes.map((_, i) => (
-        <span
-          key={i}
-          className="block w-3 h-3 rounded-sm"
-          style={{ backgroundColor: COLORS.night, opacity: 0.15 }}
-        />
-      ))}
-    </div>
-  );
-}
-
-function Frame({ id, number, title, children }) {
-  return (
-    <section
-      id={id}
-      className="relative grid grid-cols-[2rem_1fr_2rem] md:grid-cols-[3rem_1fr_3rem] max-w-5xl mx-auto px-4"
-    >
-      <Sprockets side="left" />
-
-      <div className="py-16 md:py-24">
-        <div className="flex items-center gap-3 mb-8">
-          <span
-            className="font-mono text-sm px-2 py-1 rounded"
-            style={{ backgroundColor: COLORS.ember, color: COLORS.ink }}
-          >
-            FRAME {number}
-          </span>
-
-          <h2
-            className="text-2xl md:text-3xl font-bold tracking-tight"
-            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-          >
-            {title}
-          </h2>
-        </div>
-
-        {children}
-      </div>
-
-      <Sprockets side="right" />
-    </section>
-  );
-}
 
 function SkillTag({ name, note }) {
   return (
@@ -128,9 +75,6 @@ function ProjectCard({ project }) {
       style={{ backgroundColor: COLORS.paper, color: COLORS.ink }}
     >
       <div className="flex items-center justify-between">
-        <span className="font-mono text-xs opacity-60">
-          FRAME {project.frame}
-        </span>
         <ArrowUpRight size={18} style={{ color: COLORS.acacia }} />
       </div>
 
@@ -159,8 +103,7 @@ function ProjectCard({ project }) {
   );
 }
 
-
-function Sidebar({ mobileOpen, setMobileOpen }) {
+function Sidebar({ mobileOpen, setMobileOpen, activeSection, scrollToSection }) {
   return (
     <>
       {/* Desktop expandable sidebar */}
@@ -177,7 +120,10 @@ function Sidebar({ mobileOpen, setMobileOpen }) {
         }}
       >
         {/* Logo */}
-        <div className="h-20 flex items-center px-5 shrink-0">
+        <button
+          className="h-20 flex items-center px-5 shrink-0"
+          onClick={() => scrollToSection("intro")}
+        >
           <div className="flex items-center gap-4 min-w-max">
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
@@ -199,27 +145,26 @@ function Sidebar({ mobileOpen, setMobileOpen }) {
               <div className="text-xs opacity-50">PORTFOLIO</div>
             </div>
           </div>
-        </div>
+        </button>
 
         {/* Navigation */}
         <nav className="flex flex-col gap-2 px-3 mt-6">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
+            const isActive = activeSection === item.id;
 
             return (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                className={({ isActive }) =>
-                  `relative flex items-center gap-4 h-12 px-3 rounded-xl
+              <button
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className={`relative flex items-center gap-4 h-12 px-3 rounded-xl
                    min-w-max transition-all duration-200 hover:translate-x-1
-                   ${isActive ? "ring-1" : ""}`
-                }
-                style={({ isActive }) => ({
+                   ${isActive ? "ring-1" : ""}`}
+                style={{
                   color: COLORS.bone,
                   backgroundColor: isActive ? "#242942" : "transparent",
                   ringColor: COLORS.ember,
-                })}
+                }}
               >
                 <Icon
                   size={21}
@@ -230,7 +175,7 @@ function Sidebar({ mobileOpen, setMobileOpen }) {
                 <span className="font-mono text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
                   {item.label}
                 </span>
-              </NavLink>
+              </button>
             );
           })}
         </nav>
@@ -272,7 +217,10 @@ function Sidebar({ mobileOpen, setMobileOpen }) {
         }}
       >
         <div className="px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
+          <button
+            className="flex items-center gap-2"
+            onClick={() => scrollToSection("intro")}
+          >
             <Film size={20} style={{ color: COLORS.ember }} />
             <span
               className="font-bold tracking-wide"
@@ -280,7 +228,7 @@ function Sidebar({ mobileOpen, setMobileOpen }) {
             >
               OTHMAN
             </span>
-          </Link>
+          </button>
 
           <button
             className="p-2"
@@ -294,13 +242,16 @@ function Sidebar({ mobileOpen, setMobileOpen }) {
         {mobileOpen && (
           <nav className="flex flex-col px-4 pb-4 gap-3 font-mono text-sm">
             {NAV_ITEMS.map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                onClick={() => setMobileOpen(false)}
+              <button
+                key={item.id}
+                className="text-left"
+                style={{
+                  color: activeSection === item.id ? COLORS.ember : COLORS.bone,
+                }}
+                onClick={() => scrollToSection(item.id)}
               >
                 {item.label}
-              </NavLink>
+              </button>
             ))}
           </nav>
         )}
@@ -309,22 +260,20 @@ function Sidebar({ mobileOpen, setMobileOpen }) {
   );
 }
 
-function Page({ number, title, children }) {
+function Section({ id, title, children }) {
   return (
-    <section className="max-w-5xl mx-auto px-6 py-16 md:py-24">
-      <div className="flex items-center gap-3 mb-10">
-        
-        <h1
-          className="text-3xl md:text-4xl font-bold tracking-tight"
-          style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-        >
-          {title}
-        </h1>
-      </div>
+    <section id={id} className="max-w-5xl mx-auto px-6 py-16 md:py-24 scroll-mt-20">
+      <h1
+        className="text-3xl md:text-4xl font-bold tracking-tight mb-10"
+        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+      >
+        {title}
+      </h1>
       {children}
     </section>
   );
 }
+
 function TypewriterWords() {
   const text = "Full Stack Developer ";
   const [displayed, setDisplayed] = React.useState("");
@@ -335,27 +284,20 @@ function TypewriterWords() {
     let timer;
 
     if (!deleting && index < text.length) {
-      // Typing
       timer = setTimeout(() => {
         setDisplayed(text.slice(0, index + 1));
         setIndex(index + 1);
       }, 120);
-
     } else if (!deleting && index === text.length) {
-      // Pause after finishing
       timer = setTimeout(() => {
         setDeleting(true);
       }, 1800);
-
     } else if (deleting && index > 0) {
-      // Deleting
       timer = setTimeout(() => {
         setDisplayed(text.slice(0, index - 1));
         setIndex(index - 1);
       }, 70);
-
     } else if (deleting && index === 0) {
-      // Pause before typing again
       timer = setTimeout(() => {
         setDeleting(false);
       }, 600);
@@ -371,49 +313,44 @@ function TypewriterWords() {
     </span>
   );
 }
-function IntroPage() {
+
+function IntroSection() {
   return (
-    <Page  title="Intro">
+    <Section id="intro" title="Intro">
       <p
         className="text-3xl md:text-5xl font-bold leading-tight mb-4"
         style={{ fontFamily: "'Space Grotesk', sans-serif" }}
       >
-        <p
-
->
-  Hi I'm OTHMAN JAFARI,{" "}
-  <TypewriterWords />
-</p>
-  
+        Hi I'm OTHMAN JAFARI, <TypewriterWords />
       </p>
       <p className="max-w-xl opacity-80 leading-relaxed">
         A second-year of Bachelor in Computer Science student in
         Arusha, Tanzania, learning full-stack development while working
-        toward starting my own animation company. 
+        toward starting my own animation company.
       </p>
       <div className="flex gap-3 mt-6">
-        <Link
-          to="/work"
+        <a
+          href="#work"
           className="px-5 py-2 rounded-lg font-semibold text-sm"
           style={{ backgroundColor: COLORS.ember, color: COLORS.ink }}
         >
           See my work
-        </Link>
-        <Link
-          to="/contact"
+        </a>
+        <a
+          href="#contact"
           className="px-5 py-2 rounded-lg font-semibold text-sm border"
           style={{ borderColor: COLORS.acacia }}
         >
           Get in touch
-        </Link>
+        </a>
       </div>
-    </Page>
+    </Section>
   );
 }
 
-function AboutPage() {
+function AboutSection() {
   return (
-    <Page  title="About Me">
+    <Section id="about" title="About Me">
       <div className="flex items-start gap-4">
         <GraduationCap
           size={28}
@@ -421,21 +358,21 @@ function AboutPage() {
           className="shrink-0 mt-1"
         />
         <p className="max-w-2xl leading-relaxed opacity-90">
-          I'm based in Dodoma, Tanzania, currently in my second year of 
-          Bachelor in Computer Science and Information Technology , expecting to graduate in 2027. I'm a
-           full-stack developer with a foundation in JavaScript,
+          I'm based in Dodoma, Tanzania, currently in my second year of
+          Bachelor in Computer Science and Information Technology, expecting to graduate in 2027. I'm a
+          full-stack developer with a foundation in JavaScript,
           and I learn best by building real, working projects and picking
           apart how they work afterward. Outside of coding, I'm working
           toward a bigger goal: starting my own animation studio in Tanzania.
         </p>
       </div>
-    </Page>
+    </Section>
   );
 }
 
-function EducationPage() {
+function EducationSection() {
   return (
-    <Page  title="Education & Stack">
+    <Section id="education" title="Education & Stack">
       <div className="mb-10">
         <div className="flex items-center gap-3 mb-3">
           <GraduationCap size={24} style={{ color: COLORS.ember }} />
@@ -453,13 +390,13 @@ function EducationPage() {
           <SkillTag key={skill.name} name={skill.name} note={skill.note} />
         ))}
       </div>
-    </Page>
+    </Section>
   );
 }
 
-function WorkPage() {
+function WorkSection() {
   return (
-    <Page  title="What I Do">
+    <Section id="work" title="What I Do">
       <div className="grid md:grid-cols-2 gap-5">
         {PROJECTS.map((project) => (
           <ProjectCard key={project.title} project={project} />
@@ -481,13 +418,13 @@ function WorkPage() {
           </div>
         ))}
       </div>
-    </Page>
+    </Section>
   );
 }
 
-function ContactPage() {
+function ContactSection() {
   return (
-    <Page  title="Contact">
+    <Section id="contact" title="Contact">
       <div className="max-w-2xl">
         <div className="flex items-start gap-4 mb-8">
           <Rocket size={28} style={{ color: COLORS.ember }} className="shrink-0" />
@@ -496,23 +433,23 @@ function ContactPage() {
             for any kind of information feel free to check up on me the links below.
           </p>
         </div>
-        <div className="space-y-4 font-mono text-sm"> 
+        <div className="space-y-4 font-mono text-sm">
           <a
-  href="tel:+255686013965"
-  className="flex items-center gap-3 hover:opacity-70"
->
-  <Phone size={18} style={{ color: COLORS.ember }} />
-  +255 686 013 965
-</a>
+            href="tel:+255686013965"
+            className="flex items-center gap-3 hover:opacity-70"
+          >
+            <Phone size={18} style={{ color: COLORS.ember }} />
+            +255 686 013 965
+          </a>
           <a
-  href="https://mail.google.com/mail/?view=cm&fs=1&to=othmanjafari5@gmail.com"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="flex items-center gap-3 hover:opacity-70"
->
-  <Mail size={18} />
-  EMAIL
-</a>
+            href="https://mail.google.com/mail/?view=cm&fs=1&to=othmanjafari5@gmail.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 hover:opacity-70"
+          >
+            <Mail size={18} />
+            EMAIL
+          </a>
           <a
             href="https://github.com/othmanjafari5-maker/"
             target="_blank"
@@ -521,7 +458,6 @@ function ContactPage() {
           >
             <ExternalLink size={18} style={{ color: COLORS.ember }} />
             GITHUB
-
           </a>
           <a
             href="https://www.linkedin.com/in/othman-jafari-8695b42a3/"
@@ -534,27 +470,14 @@ function ContactPage() {
           </a>
         </div>
       </div>
-    </Page>
-  );
-}
-
-function NotFound() {
-  return (
-    <Page number="404" title="Page Not Found">
-      <p className="opacity-70 mb-6">The page you're looking for does not exist.</p>
-      <Link
-        to="/"
-        className="inline-block px-5 py-2 rounded-lg font-semibold text-sm"
-        style={{ backgroundColor: COLORS.ember, color: COLORS.ink }}
-      >
-        Back to Intro
-      </Link>
-    </Page>
+    </Section>
   );
 }
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("intro");
+  const sectionIds = NAV_ITEMS.map((item) => item.id);
 
   useEffect(() => {
     const link = document.createElement("link");
@@ -565,44 +488,70 @@ export default function App() {
     return () => document.head.removeChild(link);
   }, []);
 
+  // Track which section is currently in view so the sidebar highlights correctly
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-40% 0px -50% 0px", threshold: 0 }
+    );
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const scrollToSection = (id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+    setMenuOpen(false);
+  };
+
   return (
-    <BrowserRouter>
-      <div
-        className="min-h-screen"
-        style={{
-          backgroundColor: COLORS.night,
-          color: COLORS.bone,
-          fontFamily: "'Inter', sans-serif",
-        }}
-      >
-        <Sidebar
-          mobileOpen={menuOpen}
-          setMobileOpen={setMenuOpen}
-        />
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: COLORS.night,
+        color: COLORS.bone,
+        fontFamily: "'Inter', sans-serif",
+      }}
+    >
+      <Sidebar
+        mobileOpen={menuOpen}
+        setMobileOpen={setMenuOpen}
+        activeSection={activeSection}
+        scrollToSection={scrollToSection}
+      />
 
-        <main className="md:ml-20 transition-all duration-300">
-          <Routes>
-            <Route path="/" element={<IntroPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/education" element={<EducationPage />} />
-            <Route path="/work" element={<WorkPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
+      <main className="md:ml-20 transition-all duration-300">
+        <IntroSection />
+        <AboutSection />
+        <EducationSection />
+        <WorkSection />
+        <ContactSection />
+      </main>
 
-        <footer className="md:ml-20 overflow-hidden py-2 border-t border-white/10">
-          <div className="marquee">
-            <div className="marquee-content">
-              <span>Application Programmer</span>
-              <span>Application Programmer</span>
-              <span>Application Programmer</span>
-              <span>Application Programmer</span>
-              <span>Application Programmer</span>
-            </div>
+      <footer className="md:ml-20 overflow-hidden py-2 border-t border-white/10">
+        <div className="marquee">
+          <div className="marquee-content">
+            <span>Application Programmer</span>
+            <span>Application Programmer</span>
+            <span>Application Programmer</span>
+            <span>Application Programmer</span>
+            <span>Application Programmer</span>
           </div>
-        </footer>
-      </div>
-    </BrowserRouter>
+        </div>
+      </footer>
+    </div>
   );
 }
