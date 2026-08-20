@@ -101,7 +101,7 @@ function ProjectCard({ project }) {
       </p>
 
       <a
-        href={project.url}
+        href={https://smart-garage-kappa.vercel.app/}
         target="_blank"
         rel="noopener noreferrer"
         className="smart-garage-link group inline-flex items-center gap-2 self-start mt-3 px-5 py-2.5 rounded-full text-sm font-semibold"
