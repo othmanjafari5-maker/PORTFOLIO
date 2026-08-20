@@ -28,3 +28,46 @@
         transform: translateX(100vw);
     }
 }
+
+
+/* Marquee animation */
+.marquee {
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  width: 100%;
+}
+
+.marquee-content {
+  display: inline-block;
+  animation: marquee-scroll 20s linear infinite;
+  padding-left: 100%;
+}
+
+.marquee-content span {
+  display: inline-block;
+  padding: 0 2rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  opacity: 0.4;
+  text-transform: uppercase;
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-100%, 0);
+  }
+}
+
+/* Social link hover effects */
+.social-link {
+  cursor: pointer;
+}
+
+.social-link:hover svg {
+  transform: scale(1.1);
+}
