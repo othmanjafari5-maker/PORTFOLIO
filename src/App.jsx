@@ -353,10 +353,10 @@ function IntroSection({ isVisible }) {
 
           <div className="flex gap-3 mt-6">
             <a
-              href="#work"
+              href="#projects"
               onClick={(e) => {
                 e.preventDefault();
-                document.getElementById("work")?.scrollIntoView({
+                document.getElementById("projects")?.scrollIntoView({
                   behavior: "smooth",
                 });
               }}
