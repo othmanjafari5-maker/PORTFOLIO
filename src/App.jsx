@@ -211,7 +211,7 @@ function Sidebar({ mobileOpen, setMobileOpen, activeSection, scrollToSection }) 
                 Software Developer
               </p>
               <p className="text-xs opacity-50 whitespace-nowrap">
-                Arusha, Tanzania
+                Dodoma, Tanzania
               </p>
             </div>
           </div>
@@ -329,13 +329,13 @@ function TypewriterWords() {
 
 function IntroSection({ isVisible }) {
   return (
-    <Section id="intro" title="Intro">
+    <Section id="intro" title="Introduction">
       <div className="max-w-3xl">
         <p
           className="text-3xl md:text-5xl font-bold leading-tight mb-4"
           style={{ fontFamily: "'Space Grotesk', sans-serif" }}
         >
-          Hi I'm OTHMAN JAFARI, <TypewriterWords />
+          Hi I'm OTHMAN JAFARI a, <TypewriterWords />
         </p>
 
         <div
@@ -423,7 +423,7 @@ function EducationSection() {
         <div className="flex items-center gap-3 mb-3">
           <GraduationCap size={24} style={{ color: COLORS.ember }} />
           <h2 className="text-xl font-bold">
-            Diploma in Computer Science — Year 2
+            Bachelor in Computer Science — Year 2
           </h2>
         </div>
 
@@ -474,7 +474,7 @@ function WorkSection() {
             "Building websites and full-stack applications.",
           ],
           ["Mobile Development", "Creating mobile applications with Flutter."],
-          ["Backend Development", "Working with PHP, MySQL and REST APIs."],
+          ["Backend Development", "Working with PHP, MySQL REST APIs and different types of CMS."],
         ].map(([title, text]) => (
           <div key={title} className="dev-card rounded-xl p-5 font-mono">
             <p className="text-xs mb-2" style={{ color: "#22d3ee" }}>
