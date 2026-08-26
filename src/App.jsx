@@ -41,7 +41,7 @@ const PROJECTS = [
     role: "Flutter frontend + PHP/MySQL backend",
     description:
       "A vehicle assistance platform connecting drivers with nearby garages and emergency mechanical support. Rebuilding the original website as a mobile app while keeping the existing PHP backend.",
-    url: "https://example.com/smart-garage",
+    url: "{https://smart-garage-kappa.vercel.app/}",
     tags: ["Flutter", "PHP", "MySQL", "REST API"],
   },
 ];
